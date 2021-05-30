@@ -1,1 +1,5 @@
 # Created by .ignore support plugin (hsz.mobi)
+.idea
+PurchaseSaleInventory-manager-par.iml
+PurchaseSaleInventory-admin/target
+PurchaseSaleInventory-code-generator/target
