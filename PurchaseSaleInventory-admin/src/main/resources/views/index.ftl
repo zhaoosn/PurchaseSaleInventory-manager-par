@@ -20,7 +20,7 @@
         .login-main .login-bottom .center .item .icon-5 {background:url(${ctx.contextPath}/images/icon-login.png) no-repeat -55px -43px;}
         .login-main .login-bottom .center .item .icon-6 {background:url(${ctx.contextPath}/images/icon-login.png) no-repeat 0 -93px;position:absolute;right:-10px;margin-top:8px;cursor:pointer;}
         .login-main .login-bottom .tip .icon-nocheck {display:inline-block;width:10px;height:10px;border-radius:2px;border:solid 1px #9abcda;position:relative;top:2px;margin:1px 8px 1px 1px;cursor:pointer;}
-        .login-main .login-bottom .tip .icon-check {margin:0 7px 0 0;width:14px;height:14px;border:none;background:url(../images/icon-login.png) no-repeat -111px -48px;}
+        .login-main .login-bottom .tip .icon-check {margin:0 7px 0 0;width:14px;height:14px;border:none;background:url(../resources/public/images/icon-login.png) no-repeat -111px -48px;}
         .login-main .login-bottom .center .item .icon {display:inline-block;width:33px;height:22px;}
         .login-main .login-bottom .center .item {width:288px;height:35px;border-bottom:1px solid #dae1e6;margin-bottom:35px;}
         .login-main {width:428px;position:relative;float:left;}

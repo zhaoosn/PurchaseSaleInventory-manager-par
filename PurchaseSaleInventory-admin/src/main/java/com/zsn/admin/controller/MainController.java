@@ -3,7 +3,6 @@ package com.zsn.admin.controller;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import javax.servlet.http.HttpSession;
 
 @Controller
 public class MainController {
@@ -35,13 +34,5 @@ public class MainController {
         return "welcome";
     }
 
-    /**
-     * 用户退出
-     * @return
-     */
-    @RequestMapping("signout")
-    public String signout(HttpSession session){
-        session.removeAttribute("user");
-        return "redirect:index";
-    }
+
 }

@@ -1,17 +1,19 @@
 package com.zsn.admin.controller;
 
-
-import com.zsn.admin.exceptions.ParamsException;
 import com.zsn.admin.model.RespBean;
 import com.zsn.admin.pojo.User;
+import com.zsn.admin.query.UserQuery;
 import com.zsn.admin.service.IUserService;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpSession;
+import java.security.Principal;
+import java.util.Map;
 
 /**
  * <p>
@@ -28,44 +30,19 @@ public class UserController {
     @Resource
     private IUserService userService;
 
-    @RequestMapping("login")
-    @ResponseBody
 
-    //接收前端ajex请求，返回json
-    //使用 utils包下的 自定义断言
-    //在登录界面 验证用户名和密码，避免判断时使用大量if-else
-/*
-    public RespBean login(String userName, String password, HttpSession session){
-        try {
-            User user = userService.login(userName,password);
-            session.setAttribute("user",user);
-            return RespBean.success("用户登录成功!");
-        } catch (ParamsException e) {
-            e.printStackTrace();
-            return RespBean.error(e.getMsg());
-        }catch (Exception e) {
-            e.printStackTrace();
-            return RespBean.error("用户登录失败!");
-        }
-    }
-*/
-    //发生异常交给全局异常（GlobalExceptionHandler）
-    public RespBean login(String userName, String password, HttpSession session){
-            User user = userService.login(userName,password);
-            session.setAttribute("user",user);
-            return RespBean.success("用户登录成功!");
-    }
 
     /**
      * 用户信息设置页面
      * @return
      */
     @RequestMapping("setting")
-    public String setting(HttpSession session){
-        User user = (User) session.getAttribute("user");
-        session.setAttribute("user",userService.getById(user.getId()));
+    public String setting(Principal principal, Model model){
+        User user = userService.findUserByUserName(principal.getName());
+        model.addAttribute("user",user);
         return "user/setting";
     }
+
 
     /**
      * 用户信息更新
@@ -75,9 +52,10 @@ public class UserController {
     @RequestMapping("updateUserInfo")
     @ResponseBody
     public RespBean updateUserInfo(User user){
-            userService.updateUserInfo(user);
-            return RespBean.success("用户信息更新成功");
+        userService.updateUserInfo(user);
+        return RespBean.success("用户信息更新成功");
     }
+
 
     /**
      * 用户密码更新页
@@ -88,9 +66,10 @@ public class UserController {
         return "user/password";
     }
 
+
     /**
      * 用户密码更新
-     * @param session
+     * @param principal
      * @param oldPassword
      * @param newPassword
      * @param confirmPassword
@@ -98,18 +77,85 @@ public class UserController {
      */
     @RequestMapping("updateUserPassword")
     @ResponseBody
-    public RespBean updateUserPassword(HttpSession session,String oldPassword,String newPassword,String confirmPassword){
-        try {
-            User user = (User) session.getAttribute("user");
-            userService.updateUserPassword(user.getUserName(),oldPassword,newPassword,confirmPassword);
-            return RespBean.success("用户密码更新成功");
-        } catch (ParamsException e) {
-            e.printStackTrace();
-            return RespBean.error(e.getMsg());
-        }catch (Exception e) {
-            e.printStackTrace();
-            return RespBean.error("用户密码更新失败!");
-        }
+    public RespBean updateUserPassword(Principal principal, String oldPassword, String newPassword, String confirmPassword){
+        userService.updateUserPassword(principal.getName(),oldPassword,newPassword,confirmPassword);
+        return RespBean.success("用户密码更新成功");
     }
+
+    /**
+     * 用户管理主页
+     * @return
+     */
+    @RequestMapping("index")
+    public String index(){
+        return "user/user";
+    }
+
+
+    /**
+     * 用户列表查询接口
+     * @param userQuery
+     * @return
+     */
+    @RequestMapping("list")
+    @ResponseBody
+    public Map<String,Object> userList(UserQuery userQuery){
+        return userService.userList(userQuery);
+    }
+
+
+    /**
+     * 添加|更新用户页
+     * @param id
+     * @param model
+     * @return
+     */
+    @RequestMapping("addOrUpdateUserPage")
+    public String addOrUpdatePage(Integer id,Model model){
+        if(null !=id){
+            model.addAttribute("user",userService.getById(id));
+        }
+        return "user/add_update";
+    }
+
+
+    /**
+     * 用户记录添加接口
+     * @param user
+     * @return
+     */
+    @RequestMapping("save")
+    @ResponseBody
+    public RespBean saveUser(User user){
+        userService.saveUser(user);
+        return RespBean.success("用户记录添加成功!");
+    }
+
+
+    /**
+     * 用户记录更新接口
+     * @param user
+     * @return
+     */
+    @RequestMapping("update")
+    @ResponseBody
+    public RespBean updateUser(User user){
+        userService.updateUser(user);
+        return RespBean.success("用户记录更新成功!");
+    }
+
+
+    /**
+     * 用户记录删除接口
+     * @param ids
+     * @return
+     */
+    @RequestMapping("delete")
+    @ResponseBody
+    public RespBean deleteUser(Integer[] ids){
+        userService.deleteUser(ids);
+        return RespBean.success("用户记录删除成功!");
+    }
+
 
 }
