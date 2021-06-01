@@ -1,10 +1,13 @@
 package com.zsn.admin.config.security;
 
+import com.zsn.admin.config.ClassPathTldsLoader;
 import com.zsn.admin.filters.CaptchaCodeFilter;
 import com.zsn.admin.pojo.User;
+import com.zsn.admin.service.IRbacService;
 import com.zsn.admin.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringBootConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -47,6 +50,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Resource
     private DataSource dataSource;
+
+    @Resource
+    private IRbacService rbacService;
 
     /**
      * 放行静态资源
@@ -114,6 +120,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             @Override
             public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
                 User userDetails = userService.findUserByUserName(username);
+                /**
+                 * 1.查询用户分配的角色
+                 * 2.根据用户扮演的角色查询角色拥有的权限记录
+                 */
+                List<String> roleNames = rbacService.findRolesByUserName(username);
+                List<String> authorities = rbacService.findAuthoritiesByRoleName(roleNames);
+                //用stream流 增加前缀，满足springsecurity的要求
+                roleNames = roleNames.stream().map(role-> "ROLE_"+role).collect(Collectors.toList());
+                authorities.addAll(roleNames);
+                userDetails.setAuthorities(AuthorityUtils.commaSeparatedStringToAuthorityList(String.join(",",authorities)));
                 return userDetails;
             }
         };
@@ -127,6 +143,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsService()).passwordEncoder(encoder());
+    }
+
+    /**
+     * 加载 ClassPathTldsLoader
+     * @return
+     */
+    @Bean
+    @ConditionalOnMissingBean(ClassPathTldsLoader.class)
+    public ClassPathTldsLoader classPathTldsLoader(){
+        return new ClassPathTldsLoader();
     }
 
 

@@ -23,7 +23,7 @@
     <select id="queryAllMenus" resultType="com.zsn.admin.dto.TreeDto">
         select id,p_id as pId,name
         from t_menu
-        where is_del =0
+        where is_del = 0
     </select>
 
 </mapper>

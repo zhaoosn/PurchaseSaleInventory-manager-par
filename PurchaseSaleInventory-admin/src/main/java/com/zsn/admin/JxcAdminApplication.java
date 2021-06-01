@@ -9,6 +9,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class JxcAdminApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(JxcAdminApplication.class,args);
+        SpringApplication.run(JxcAdminApplication.class, args);
     }
 }

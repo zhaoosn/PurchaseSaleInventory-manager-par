@@ -20,7 +20,6 @@ import org.springframework.security.core.userdetails.UserDetails;
  * </p>
  *
  * @author zhaoosn
- * @since 2021-05-30
  */
 @Data
 @EqualsAndHashCode(callSuper = false)

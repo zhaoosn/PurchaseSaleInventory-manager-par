@@ -10,7 +10,7 @@ import java.util.List;
  * 用户角色表 服务类
  * </p>
  *
- * @author 老李
+ * @author zhaoosn
  */
 public interface IUserRoleService extends IService<UserRole> {
 
